@@ -86,14 +86,19 @@
     }, 1300);
   });
 
-  // Selective Itinerary Inclusion / Exclusion Sync across Master Table, Stops, and Budget
-  const EXCLUDED_KEY = 'webzine_202611_excluded_stops_v2';
+  // Selective Itinerary Inclusion / Exclusion + Day 3 Course 1/2 Sync
+  const EXCLUDED_KEY = 'webzine_202611_excluded_stops_v3';
+  const COURSE_KEY = 'webzine_202611_day3_course_v3';
   const masterRows = Array.from(document.querySelectorAll('#masterTableBody tr[data-stop-id]'));
   const stopItems = Array.from(document.querySelectorAll('.stop-item[data-stop-id]'));
   const ticketRows = Array.from(document.querySelectorAll('#ticketsTableBody tr[data-stop-id]'));
+  const courseDividers = Array.from(document.querySelectorAll('.course-divider[data-course], .nocturnal-band[data-course]'));
+  const courseButtons = Array.from(document.querySelectorAll('.course-btn[data-course-choice], .course-select-card-btn[data-course-choice]'));
+  const courseCompareCards = Array.from(document.querySelectorAll('.course-compare-card[data-course-card]'));
   const activeCountEl = document.getElementById('masterActiveCount');
   const dynamicBudgetEl = document.getElementById('dynamicBaseBudget');
   const dynamicBudgetNoteEl = document.getElementById('dynamicBaseNote');
+  const dynamicBudgetLabelEl = document.getElementById('dynamicBudgetLabel');
   const hideExcludedBtn = document.getElementById('toggleHideExcludedBtn');
   const resetStopsBtn = document.getElementById('resetStopsBtn');
 
@@ -105,10 +110,58 @@
     excludedSet = new Set();
   }
 
+  let courseChoice = 'both'; // 'both' | 'c1' | 'c2'
+  try {
+    const savedCourse = localStorage.getItem(COURSE_KEY);
+    if (savedCourse === 'both' || savedCourse === 'c1' || savedCourse === 'c2') {
+      courseChoice = savedCourse;
+    }
+  } catch {
+    courseChoice = 'both';
+  }
+
   let currentDayFilter = 'all';
   let hideExcluded = false;
 
   const formatWon = (num) => `${num.toLocaleString('ko-KR')}원`;
+
+  const matchesCourse = (elCourse) => {
+    if (!elCourse || elCourse === 'common') return true;
+    if (courseChoice === 'both') return true;
+    return elCourse === courseChoice;
+  };
+
+  const applyCourseUI = () => {
+    courseButtons.forEach((btn) => {
+      const choice = btn.dataset.courseChoice;
+      const active = choice === courseChoice;
+      if (btn.classList.contains('course-btn')) {
+        btn.classList.toggle('is-active', active);
+        btn.setAttribute('aria-pressed', active ? 'true' : 'false');
+      } else {
+        btn.textContent = active ? '현재 선택된 코스 ✓' : '이 코스로 확정·필터';
+      }
+    });
+
+    courseCompareCards.forEach((card) => {
+      const c = card.dataset.courseCard;
+      card.classList.toggle('is-selected', courseChoice === c);
+      card.classList.toggle('is-dimmed', courseChoice !== 'both' && courseChoice !== c);
+    });
+
+    masterRows.forEach((row) => {
+      row.classList.toggle('is-course-hidden', !matchesCourse(row.dataset.course));
+    });
+    stopItems.forEach((item) => {
+      item.classList.toggle('is-course-hidden', !matchesCourse(item.dataset.course));
+    });
+    ticketRows.forEach((tRow) => {
+      tRow.classList.toggle('is-course-hidden', !matchesCourse(tRow.dataset.course));
+    });
+    courseDividers.forEach((div) => {
+      div.classList.toggle('is-course-hidden', !matchesCourse(div.dataset.course));
+    });
+  };
 
   const applyMasterTableFilters = () => {
     masterRows.forEach((row) => {
@@ -122,20 +175,41 @@
   };
 
   const syncAllStops = () => {
+    applyCourseUI();
+
+    let visibleTotal = 0;
     let activeCount = 0;
-    let totalCost4Pax = 0;
-    const paidBreakdown = [];
+    let commonCost = 0;
+    let c1Extra = 0;
+    let c2Extra = 0;
+    const paidCommon = [];
+    const paidC1 = [];
+    const paidC2 = [];
 
     masterRows.forEach((row) => {
       const stopId = row.dataset.stopId;
+      const courseTag = row.dataset.course || 'common';
       const isExcluded = excludedSet.has(stopId);
       const cost = Number(row.dataset.cost4pax || 0);
       const shortName = row.dataset.shortName || stopId;
+      const inCurrentCourse = matchesCourse(courseTag);
+
+      if (inCurrentCourse) {
+        visibleTotal += 1;
+        if (!isExcluded) activeCount += 1;
+      }
 
       if (!isExcluded) {
-        activeCount += 1;
-        totalCost4Pax += cost;
-        if (cost > 0) paidBreakdown.push(`${shortName} ${formatWon(cost)}`);
+        if (courseTag === 'c1') {
+          c1Extra += cost;
+          if (cost > 0) paidC1.push(`${shortName} ${formatWon(cost)}`);
+        } else if (courseTag === 'c2') {
+          c2Extra += cost;
+          if (cost > 0) paidC2.push(`${shortName} ${formatWon(cost)}`);
+        } else {
+          commonCost += cost;
+          if (cost > 0) paidCommon.push(`${shortName} ${formatWon(cost)}`);
+        }
       }
 
       row.classList.toggle('is-excluded', isExcluded);
@@ -165,28 +239,67 @@
       tRow.classList.toggle('is-excluded', isExcluded);
     });
 
+    const courseModeText =
+      courseChoice === 'c1' ? '코스1 대구' : courseChoice === 'c2' ? '코스2 보은' : '코스1·2 비교';
+
     if (activeCountEl) {
-      activeCountEl.textContent = `선택된 동선: ${activeCount} / ${masterRows.length}곳`;
+      activeCountEl.textContent = `활성 동선 (${courseModeText}): ${activeCount} / ${visibleTotal}곳`;
     }
 
-    if (dynamicBudgetEl) {
-      dynamicBudgetEl.textContent = totalCost4Pax > 0 ? `약 ${formatWon(totalCost4Pax)}` : '0원 (무료 위주)';
-    }
-
-    if (dynamicBudgetNoteEl) {
-      dynamicBudgetNoteEl.textContent = paidBreakdown.length
-        ? `현재 선택된 ${activeCount}곳 기준 (${paidBreakdown.join(' + ')})`
-        : `현재 선택된 ${activeCount}곳 모두 무료 입장·주차 구간입니다.`;
+    if (dynamicBudgetEl && dynamicBudgetNoteEl) {
+      if (courseChoice === 'c1') {
+        const total = commonCost + c1Extra;
+        const breakdown = [...paidCommon, ...paidC1];
+        if (dynamicBudgetLabelEl) {
+          dynamicBudgetLabelEl.textContent = '[코스 1 선택] 4인(성인2·어린이2) 필수 입장·주차 합계';
+        }
+        dynamicBudgetEl.textContent = total > 0 ? `약 ${formatWon(total)}` : '0원 (무료 위주)';
+        dynamicBudgetNoteEl.textContent = breakdown.length
+          ? `코스 1 기준 (${breakdown.join(' + ')})`
+          : `선택된 모든 구간이 무료 입장·주차입니다.`;
+      } else if (courseChoice === 'c2') {
+        const total = commonCost + c2Extra;
+        const breakdown = [...paidCommon, ...paidC2];
+        if (dynamicBudgetLabelEl) {
+          dynamicBudgetLabelEl.textContent = '[코스 2 선택] 4인(성인2·어린이2) 필수 입장·주차 합계';
+        }
+        dynamicBudgetEl.textContent = total > 0 ? `약 ${formatWon(total)}` : '0원 (무료 위주)';
+        dynamicBudgetNoteEl.textContent = breakdown.length
+          ? `코스 2 체크 기준 (${breakdown.join(' + ')}) · 세조길(5천)과 청남대(1.8만) 중 미방문 대안 제외 시 자동 차감`
+          : `선택된 모든 구간이 무료 입장·주차입니다.`;
+      } else {
+        const totalC1 = commonCost + c1Extra;
+        const totalC2 = commonCost + c2Extra;
+        if (dynamicBudgetLabelEl) {
+          dynamicBudgetLabelEl.textContent = '3일차 코스별 4인(성인2·어린이2) 필수 입장·주차 합계 비교';
+        }
+        dynamicBudgetEl.textContent = `코스1 약 ${formatWon(totalC1)} / 코스2 약 ${formatWon(totalC2)}`;
+        dynamicBudgetNoteEl.textContent =
+          `공통(${paidCommon.join(' + ') || '없음'}) + 코스1(${paidC1.join(' + ') || '무료'}) vs 코스2(${paidC2.join(' + ') || '무료'})`;
+      }
     }
 
     try {
       localStorage.setItem(EXCLUDED_KEY, JSON.stringify(Array.from(excludedSet)));
+      localStorage.setItem(COURSE_KEY, courseChoice);
     } catch {
       // Ignore storage failures
     }
 
     applyMasterTableFilters();
   };
+
+  const setCourseChoice = (nextChoice) => {
+    if (nextChoice !== 'both' && nextChoice !== 'c1' && nextChoice !== 'c2') return;
+    courseChoice = nextChoice;
+    syncAllStops();
+  };
+
+  courseButtons.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      setCourseChoice(btn.dataset.courseChoice);
+    });
+  });
 
   const toggleStop = (stopId, forceIncluded) => {
     if (!stopId) return;
@@ -248,6 +361,7 @@
   if (resetStopsBtn) {
     resetStopsBtn.addEventListener('click', () => {
       excludedSet.clear();
+      courseChoice = 'both';
       hideExcluded = false;
       if (hideExcludedBtn) {
         hideExcludedBtn.classList.remove('is-active');
@@ -288,7 +402,7 @@
   bindFilter('foodFilterBar', '.food-card', 'foodTag');
 
   // Persistent family pre-trip checklist
-  const STORAGE_KEY = 'webzine_202611_checklist_v2';
+  const STORAGE_KEY = 'webzine_202611_checklist_v3';
   const checklistEl = document.getElementById('familyChecklist');
   const checkCounterEl = document.getElementById('checkCounter');
   const resetBtn = document.getElementById('resetChecklistBtn');
