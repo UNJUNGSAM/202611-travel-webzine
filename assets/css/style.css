@@ -1585,19 +1585,22 @@ a {
   color: var(--ink-main);
 }
 
-.course-btn.is-active {
+.course-btn.is-active,
+.course-btn.is-active:hover {
   background: var(--ink-main);
   color: var(--bg-paper);
   border-color: var(--ink-main);
 }
 
-.course-btn[data-course-choice="c1"].is-active {
+.course-btn[data-course-choice="c1"].is-active,
+.course-btn[data-course-choice="c1"].is-active:hover {
   background: #9e3d1e;
   border-color: #9e3d1e;
   color: #ffffff;
 }
 
-.course-btn[data-course-choice="c2"].is-active {
+.course-btn[data-course-choice="c2"].is-active,
+.course-btn[data-course-choice="c2"].is-active:hover {
   background: #1b523d;
   border-color: #1b523d;
   color: #ffffff;

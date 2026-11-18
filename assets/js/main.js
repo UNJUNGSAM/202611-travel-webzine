@@ -362,6 +362,14 @@
     resetStopsBtn.addEventListener('click', () => {
       excludedSet.clear();
       courseChoice = 'both';
+      currentDayFilter = 'all';
+      if (masterFilterGroup) {
+        masterFilterGroup.querySelectorAll('.filter-btn').forEach((b) => {
+          const isAll = (b.dataset.filter || '') === 'all';
+          b.classList.toggle('is-active', isAll);
+          b.setAttribute('aria-pressed', isAll ? 'true' : 'false');
+        });
+      }
       hideExcluded = false;
       if (hideExcludedBtn) {
         hideExcludedBtn.classList.remove('is-active');
