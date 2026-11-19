@@ -11,7 +11,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@500;600;700&display=swap">
-  <link rel="stylesheet" href="assets/css/style.css?v=20261119-1">
+  <link rel="stylesheet" href="assets/css/style.css?v=20261119-2">
 </head>
 <body>
   <div class="read-progress" aria-hidden="true">
@@ -127,7 +127,7 @@
 
         <div class="master-hint">
           <span>
-            <strong>전기차 내비·공영주차 연동:</strong> 초록 <strong>[주차장/지도]</strong>는 내비 목적지(공영주차장 우선), 청록 <strong style="color: #0b5d69;">[충전소]</strong>는 급속·완속 전기차 충전 거점을 네이버지도 앱으로 바로 연결합니다.
+            <strong>전기차 내비·공영주차 연동:</strong> 초록 <strong>[주차장/지도]</strong>는 내비 목적지(공영주차장 우선), 청록 <strong style="color: #0b5d69;">[충전소]</strong>는 급속·완속 전기차 충전 거점을 연결합니다. <strong>모바일에서는 각 일정을 터치하면 상세 설명·주차장·충전소·네이버지도 버튼이 아래로 펼쳐집니다.</strong>
           </span>
           <span class="tabular" style="font-weight: 600;">남원 운봉→황매산 1시간 10분 · 도동서원→현풍프라나 20분 · 코스1 귀경 2시간 30분 / 코스2 보은→분당 1시간 40분</span>
         </div>
@@ -142,6 +142,7 @@
 
           <div class="master-toolbar__right">
             <span class="master-status-pill tabular" id="masterActiveCount">활성 동선 (코스1·2 비교): 21 / 21곳</span>
+            <button type="button" class="filter-btn mobile-expand-all-btn" id="toggleExpandAllMasterBtn" aria-pressed="false">상세 모두 펼치기</button>
             <button type="button" class="filter-btn" id="toggleHideExcludedBtn" aria-pressed="false">제외 일정 숨기기</button>
             <button type="button" class="btn btn--ghost btn--sm" id="resetStopsBtn">전체 포함 초기화</button>
           </div>
@@ -1886,6 +1887,7 @@
           <button type="button" class="filter-btn" data-filter="alert" aria-pressed="false">예약·숙소·마감 확인</button>
           <button type="button" class="filter-btn" data-filter="paid" aria-pressed="false">입장·주차 유료</button>
           <button type="button" class="filter-btn" data-filter="free" aria-pressed="false">입장·주차 무료</button>
+          <button type="button" class="btn btn--ghost btn--sm mobile-expand-all-btn" id="toggleExpandAllTicketsBtn" aria-pressed="false">요금·주차 모두 펼치기</button>
         </div>
 
         <div class="table-scroll">
@@ -2886,6 +2888,6 @@
     </div>
   </div>
 
-  <script src="assets/js/main.js?v=20261119-1"></script>
+  <script src="assets/js/main.js?v=20261119-2"></script>
 </body>
 </html>

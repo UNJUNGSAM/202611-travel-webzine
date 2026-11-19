@@ -409,6 +409,109 @@
   bindFilter('ticketFilterBar', '.ticket-table tbody tr', 'ticketType');
   bindFilter('foodFilterBar', '.food-card', 'foodTag');
 
+  // Mobile Vertical Accordion Cards for Master Schedule & Ticket Tables (Zero Horizontal Scroll)
+  const mobileMedia = window.matchMedia('(max-width: 860px)');
+  const expandAllMasterBtn = document.getElementById('toggleExpandAllMasterBtn');
+  const expandAllTicketsBtn = document.getElementById('toggleExpandAllTicketsBtn');
+
+  const setRowExpanded = (row, toggleBtn, collapsedText, expanded) => {
+    row.classList.toggle('is-expanded', expanded);
+    if (toggleBtn) {
+      toggleBtn.setAttribute('aria-expanded', expanded ? 'true' : 'false');
+      toggleBtn.textContent = expanded ? '접기 ▴' : collapsedText;
+    }
+  };
+
+  const syncExpandAllBtn = (rows, btn, collapsedLabel, expandedLabel) => {
+    if (!btn) return;
+    const visibleRows = rows.filter(
+      (r) => !r.classList.contains('is-hidden') && !r.classList.contains('is-course-hidden')
+    );
+    const allExpanded = visibleRows.length > 0 && visibleRows.every((r) => r.classList.contains('is-expanded'));
+    btn.classList.toggle('is-active', allExpanded);
+    btn.setAttribute('aria-pressed', allExpanded ? 'true' : 'false');
+    btn.textContent = allExpanded ? expandedLabel : collapsedLabel;
+  };
+
+  masterRows.forEach((row) => {
+    const spotCell = row.querySelector('td:nth-child(4)');
+    const spotLink = spotCell?.querySelector('.master-spot-link');
+    let toggleBtn = null;
+    if (spotCell && spotLink) {
+      const head = document.createElement('div');
+      head.className = 'master-spot-head';
+      toggleBtn = document.createElement('button');
+      toggleBtn.type = 'button';
+      toggleBtn.className = 'row-expand-toggle';
+      toggleBtn.setAttribute('aria-expanded', 'false');
+      toggleBtn.textContent = '상세·지도 ▾';
+      spotCell.insertBefore(head, spotLink);
+      head.appendChild(spotLink);
+      head.appendChild(toggleBtn);
+    }
+
+    row.addEventListener('click', (e) => {
+      if (e.target.closest('.master-check-cell, input.master-check, .master-actions-wrap a')) return;
+      const onSpotLink = Boolean(e.target.closest('.master-spot-link'));
+      const onToggleBtn = Boolean(e.target.closest('.row-expand-toggle'));
+      if (onSpotLink && !mobileMedia.matches) return;
+      if (!mobileMedia.matches && !onToggleBtn) return;
+      if (onSpotLink) e.preventDefault();
+      const next = !row.classList.contains('is-expanded');
+      setRowExpanded(row, toggleBtn, '상세·지도 ▾', next);
+      syncExpandAllBtn(masterRows, expandAllMasterBtn, '상세 모두 펼치기', '모두 접기');
+    });
+  });
+
+  ticketRows.forEach((tRow) => {
+    const pillCell = tRow.querySelector('td:nth-child(2)');
+    let toggleBtn = null;
+    if (pillCell) {
+      toggleBtn = document.createElement('button');
+      toggleBtn.type = 'button';
+      toggleBtn.className = 'row-expand-toggle';
+      toggleBtn.setAttribute('aria-expanded', 'false');
+      toggleBtn.textContent = '요금·주차 ▾';
+      pillCell.appendChild(toggleBtn);
+    }
+
+    tRow.addEventListener('click', (e) => {
+      if (e.target.closest('a, input, label')) return;
+      if (!mobileMedia.matches && !e.target.closest('.row-expand-toggle')) return;
+      const next = !tRow.classList.contains('is-expanded');
+      setRowExpanded(tRow, toggleBtn, '요금·주차 ▾', next);
+      syncExpandAllBtn(ticketRows, expandAllTicketsBtn, '요금·주차 모두 펼치기', '모두 접기');
+    });
+  });
+
+  if (expandAllMasterBtn) {
+    expandAllMasterBtn.addEventListener('click', () => {
+      const visibleRows = masterRows.filter(
+        (r) => !r.classList.contains('is-hidden') && !r.classList.contains('is-course-hidden')
+      );
+      const expandAll = !(visibleRows.length > 0 && visibleRows.every((r) => r.classList.contains('is-expanded')));
+      visibleRows.forEach((row) => {
+        const btn = row.querySelector('.row-expand-toggle');
+        setRowExpanded(row, btn, '상세·지도 ▾', expandAll);
+      });
+      syncExpandAllBtn(masterRows, expandAllMasterBtn, '상세 모두 펼치기', '모두 접기');
+    });
+  }
+
+  if (expandAllTicketsBtn) {
+    expandAllTicketsBtn.addEventListener('click', () => {
+      const visibleRows = ticketRows.filter(
+        (r) => !r.classList.contains('is-hidden') && !r.classList.contains('is-course-hidden')
+      );
+      const expandAll = !(visibleRows.length > 0 && visibleRows.every((r) => r.classList.contains('is-expanded')));
+      visibleRows.forEach((row) => {
+        const btn = row.querySelector('.row-expand-toggle');
+        setRowExpanded(row, btn, '요금·주차 ▾', expandAll);
+      });
+      syncExpandAllBtn(ticketRows, expandAllTicketsBtn, '요금·주차 모두 펼치기', '모두 접기');
+    });
+  }
+
   // Persistent family pre-trip checklist
   const STORAGE_KEY = 'webzine_202611_checklist_v3';
   const checklistEl = document.getElementById('familyChecklist');
