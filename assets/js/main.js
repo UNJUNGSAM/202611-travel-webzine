@@ -251,31 +251,31 @@
         const total = commonCost + c1Extra;
         const breakdown = [...paidCommon, ...paidC1];
         if (dynamicBudgetLabelEl) {
-          dynamicBudgetLabelEl.textContent = '[코스 1 선택] 4인(성인2·어린이2) 필수 입장·주차 합계';
+          dynamicBudgetLabelEl.textContent = '[코스 1 선택 · 전기차 감면 반영] 4인 필수 입장·주차 합계';
         }
         dynamicBudgetEl.textContent = total > 0 ? `약 ${formatWon(total)}` : '0원 (무료 위주)';
         dynamicBudgetNoteEl.textContent = breakdown.length
-          ? `코스 1 기준 (${breakdown.join(' + ')})`
+          ? `코스 1 공영주차 전기차 50% 감면 기준 (${breakdown.join(' + ')})`
           : `선택된 모든 구간이 무료 입장·주차입니다.`;
       } else if (courseChoice === 'c2') {
         const total = commonCost + c2Extra;
         const breakdown = [...paidCommon, ...paidC2];
         if (dynamicBudgetLabelEl) {
-          dynamicBudgetLabelEl.textContent = '[코스 2 선택] 4인(성인2·어린이2) 필수 입장·주차 합계';
+          dynamicBudgetLabelEl.textContent = '[코스 2 선택 · 전기차 감면 반영] 4인 필수 입장·주차 합계';
         }
         dynamicBudgetEl.textContent = total > 0 ? `약 ${formatWon(total)}` : '0원 (무료 위주)';
         dynamicBudgetNoteEl.textContent = breakdown.length
-          ? `코스 2 체크 기준 (${breakdown.join(' + ')}) · 세조길(5천)과 청남대(1.8만) 중 미방문 대안 제외 시 자동 차감`
+          ? `코스 2 전기차 공영주차 감면 기준 (${breakdown.join(' + ')}) · 세조길(5천)과 청남대(1.8만) 중 미방문 대안 제외 시 약 72,500~85,500원`
           : `선택된 모든 구간이 무료 입장·주차입니다.`;
       } else {
         const totalC1 = commonCost + c1Extra;
         const totalC2 = commonCost + c2Extra;
         if (dynamicBudgetLabelEl) {
-          dynamicBudgetLabelEl.textContent = '3일차 코스별 4인(성인2·어린이2) 필수 입장·주차 합계 비교';
+          dynamicBudgetLabelEl.textContent = '3일차 코스별 4인 필수 입장·공영주차(전기차 50% 감면) 합계 비교';
         }
         dynamicBudgetEl.textContent = `코스1 약 ${formatWon(totalC1)} / 코스2 약 ${formatWon(totalC2)}`;
         dynamicBudgetNoteEl.textContent =
-          `공통(${paidCommon.join(' + ') || '없음'}) + 코스1(${paidC1.join(' + ') || '무료'}) vs 코스2(${paidC2.join(' + ') || '무료'})`;
+          `공통·전기차 감면(${paidCommon.join(' + ') || '없음'}) + 코스1(${paidC1.join(' + ') || '무료'}) vs 코스2(${paidC2.join(' + ') || '무료'})`;
       }
     }
 

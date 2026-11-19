@@ -1299,6 +1299,29 @@ a {
   border-color: #1d9d4c;
 }
 
+.btn--ev {
+  background: #eef6f2;
+  color: #0f5338;
+  border-color: rgba(15, 83, 56, 0.35);
+}
+
+.btn--ev:hover {
+  background: #dceee5;
+  border-color: rgba(15, 83, 56, 0.55);
+  color: #0a3c28;
+}
+
+.nocturnal-band .btn--ev {
+  background: rgba(25, 118, 82, 0.28);
+  color: #d7f5e8;
+  border-color: rgba(121, 214, 174, 0.42);
+}
+
+.nocturnal-band .btn--ev:hover {
+  background: rgba(25, 118, 82, 0.46);
+  color: #ffffff;
+}
+
 /* Master Itinerary Table Section (Top) */
 .master-section {
   padding-block: clamp(32px, 5vw, 56px);
@@ -1732,6 +1755,69 @@ a {
   margin-top: 8px;
 }
 
+/* EV Charging & Public Parking Strategy */
+.pill--ev {
+  background: #e1f2ec;
+  color: #0f5338;
+  border: 1px solid rgba(15, 83, 56, 0.28);
+}
+
+.ev-strategy-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+  margin-bottom: 20px;
+}
+
+.ev-strategy-card {
+  background: var(--bg-surface);
+  border: 1px solid rgba(15, 83, 56, 0.24);
+  border-radius: var(--radius-md);
+  padding: 16px 18px;
+  display: grid;
+  gap: 10px;
+  align-content: space-between;
+}
+
+.ev-strategy-card__head {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 6px;
+}
+
+.ev-strategy-card__title {
+  margin: 0;
+  font-family: var(--font-serif);
+  font-size: 1.02rem;
+  font-weight: 700;
+  color: var(--ink-main);
+}
+
+.ev-strategy-card__body {
+  margin: 0;
+  font-size: 0.85rem;
+  line-height: 1.55;
+  color: var(--ink-secondary);
+}
+
+.ev-strategy-card__links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding-top: 8px;
+  border-top: 1px solid var(--hairline);
+}
+
+.parking-inline-row {
+  background: #f2f8f5;
+}
+
+.nocturnal-band .parking-inline-row {
+  background: rgba(25, 118, 82, 0.14);
+}
+
 /* Responsive Breakpoints */
 @media (max-width: 1020px) {
   .cover__grid,
@@ -1748,7 +1834,8 @@ a {
   }
   .route-legs,
   .food-grid,
-  .budget-summary {
+  .budget-summary,
+  .ev-strategy-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
   .ratio-2-3 {
@@ -1761,6 +1848,7 @@ a {
   .route-legs,
   .food-grid,
   .budget-summary,
+  .ev-strategy-grid,
   .media-duo {
     grid-template-columns: minmax(0, 1fr);
   }
@@ -1777,5 +1865,160 @@ a {
   }
   .masthead__issue {
     display: none;
+  }
+  .yt-curation-box {
+    padding: 16px;
+  }
+}
+
+/* YouTube Restaurant & Dessert Curation List */
+.btn--yt {
+  background: #fff4f2;
+  color: #b3261e;
+  border: 1px solid rgba(179, 38, 30, 0.28);
+}
+
+.btn--yt:hover,
+.btn--yt:focus-visible {
+  background: #b3261e;
+  color: #fff;
+  border-color: #b3261e;
+}
+
+.yt-curation-box {
+  margin-top: 28px;
+  padding: 24px;
+  background: var(--bg-card, #fffdf9);
+  border: 1px solid var(--line, #e2d9c8);
+  border-radius: 14px;
+}
+
+.yt-curation-head {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.yt-curation-head h3 {
+  margin: 0 0 6px;
+  font-size: 1.24rem;
+  font-family: var(--font-serif, 'Noto Serif KR', serif);
+  color: var(--ink, #1f1c18);
+}
+
+.yt-curation-head p {
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--ink-soft, #4a4339);
+  max-width: 68ch;
+  line-height: 1.55;
+}
+
+.yt-jump-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.yt-region-group {
+  margin-top: 18px;
+}
+
+.yt-region-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0 0 10px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid var(--line-strong, #cbbca4);
+  font-size: 1.04rem;
+  font-weight: 700;
+  color: var(--ink, #1f1c18);
+}
+
+.yt-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 8px;
+}
+
+.yt-item {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 1.85fr) minmax(0, 1.1fr) auto;
+  gap: 12px;
+  align-items: center;
+  padding: 11px 14px;
+  background: var(--bg-paper, #faf6ee);
+  border: 1px solid var(--line, #e5dccb);
+  border-radius: 10px;
+  font-size: 0.86rem;
+  line-height: 1.45;
+}
+
+.yt-item > * {
+  min-width: 0;
+}
+
+.yt-item__name {
+  font-weight: 700;
+  color: var(--ink, #1f1c18);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+}
+
+.yt-item__badge {
+  display: inline-block;
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 999px;
+  background: #f3e8d8;
+  color: #6e471b;
+}
+
+.yt-item__badge--dessert {
+  background: #fce8e6;
+  color: #a5281b;
+}
+
+.yt-item__badge--yt {
+  background: #fff0ed;
+  color: #b3261e;
+}
+
+.yt-item__menu {
+  color: var(--ink-soft, #4a4339);
+}
+
+.yt-item__parking {
+  color: #0b5d69;
+  font-weight: 600;
+  font-size: 0.81rem;
+}
+
+.yt-item__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  justify-content: flex-end;
+}
+
+@media (max-width: 960px) {
+  .yt-item {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 6px;
+  }
+  .yt-item__actions {
+    justify-content: flex-start;
+    margin-top: 4px;
   }
 }
